@@ -1,0 +1,46 @@
+Vendored-source change 2 to ShadowHook 2.0.1
+============================================
+
+File: shadowhook/src/main/cpp/common/sh_config.h
+
+  - SH_CONFIG_TRY_HOOK_WITH_ISLAND     disabled
+  - SH_CONFIG_TRY_HOOK_WITHOUT_ISLAND  enabled
+
+Upstream marks both of these "do not change in production". They are changed
+here because the island path crashes the Bluetooth process on this device.
+
+What goes wrong
+---------------
+A branch island is a small trampoline placed close enough to the hooked
+function that a single relative branch reaches it. sh_island_alloc tries an
+anonymous mmap near the target first, and falls back to a gap inside the target
+ELF's own mapping.
+
+On this device the address space around libbluetooth_jni.so is covered by large
+PROT_NONE reservations, so the anonymous attempt cannot be placed and the ELF
+gap fallback is taken. The gap it picks is the loader's own alignment padding
+between the library's relro and data segments, which is mapped PROT_NONE:
+
+  768fa3b000-768fa75000 r--p 00dd4000  libbluetooth_jni.so
+  768fa75000-768fa77000 ---p 00000000               <- the gap it chose
+  768fa77000-768fa7b000 rw-p 00e10000  libbluetooth_jni.so
+
+That is two pages at library vaddr 0xe0e000. ShadowHook writes to it without
+first making it writable, so the zeroing memset takes SIGSEGV with SEGV_ACCERR,
+the "mapped but wrong permissions" code that PROT_NONE produces.
+
+The observed crash matched this exactly: a 4096 byte memset faulting at
+0x7703a54080, which is vaddr 0xe0e080 for that instance's load base of
+0x7702c46000, reached through
+
+  waiter -> install -> shadowhook_hook_func_addr -> sh_task_do
+         -> sh_switch_hook_unique -> sh_switch_inst_hook -> sh_inst_hook
+
+Consequence of the change
+-------------------------
+Without islands, the hook is an absolute jump built from several instructions,
+so more bytes at the start of the target are overwritten and relocated into the
+enter trampoline. That needs the target to be long enough. Every function this
+project hooks is a normal-sized function beginning with the standard
+bti c / shadow-call-stack push / paciasp prologue, which was confirmed in the
+live process by the module's dry run, so there is room.

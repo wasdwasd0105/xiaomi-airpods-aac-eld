@@ -1,0 +1,37 @@
+Vendored-source change 3 to ShadowHook 2.0.1
+============================================
+
+File: shadowhook/src/main/cpp/common/sh_trampo.c, in sh_trampo_alloc_between.
+
+The reuse scan is skipped, so every trampoline allocation gets its own fresh
+mmap'd page instead of taking the next free slot in an existing one.
+
+Why
+---
+Reusing a slot in a page that already holds a live trampoline faults on this
+device. Instrumenting the allocator showed it precisely:
+
+  trampo: NEW   page=7b0c786000 len=4096, zeroing      -> ok, slot 0
+  trampo: REUSE page=7b0c786000 slot=1 trampo=...100   -> ok
+  trampo: REUSE page=7b0c786000 slot=2 trampo=...200   -> SIGSEGV, SEGV_ACCERR
+
+The page is mapped PROT_READ|PROT_WRITE|PROT_EXEC and was zeroed in full when
+it was created, and /proc/self/maps confirms rwxp at that moment. Yet a later
+256 byte write at offset 0x200 takes an access violation, while offsets 0 and
+0x100 were written successfully just before.
+
+What distinguishes the failing write is that trampolines in the earlier slots
+have been executed by then. The behaviour is consistent with this kernel
+revoking write access to an anonymous RWX page once instructions have been
+fetched from it, which is a reasonable W^X hardening measure and is invisible
+in the maps output. A standalone probe inside the same process, mapping RWX and
+writing the whole page and then offset 0x200, succeeds every time, which fits:
+nothing has executed from that page.
+
+Not reproducible from outside, and not something the engine can detect, so the
+allocation strategy is changed instead.
+
+Cost
+----
+One page per hook. This project installs 18, so 72 KB. The reuse scan existed
+to amortise that, and nothing else depends on it.

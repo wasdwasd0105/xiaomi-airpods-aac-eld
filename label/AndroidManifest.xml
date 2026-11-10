@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="io.aaceld.label"
+    android:versionCode="8"
+    android:versionName="1.7">
+    <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="36" />
+    <application android:label="AAC-ELD in Bluetooth settings" android:hasCode="true">
+        <meta-data android:name="xposedmodule" android:value="true" />
+        <meta-data android:name="xposeddescription"
+            android:value="Shows AAC-ELD as the codec badge in Bluetooth settings, and adds an AAC-ELD switch and bit rate to the headset page. Needs the AAC-ELD for A2DP module. Scope: Settings." />
+        <meta-data android:name="xposedminversion" android:value="82" />
+    </application>
+</manifest>

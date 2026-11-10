@@ -1,0 +1,39 @@
+Vendored-source change to ShadowHook 2.0.1
+==========================================
+
+File: shadowhook/src/main/cpp/shadowhook.c, inside shadowhook_init.
+
+Problem
+-------
+On this device (Android 16, API 36) shadowhook_init fails with
+SHADOWHOOK_ERRNO_INIT_LINKER, logged by the module as
+"shadowhook_init failed: Init linker mod failed". sh_linker_init looks up the
+dynamic linker's internal soinfo::call_constructors, soinfo::call_destructors
+and g_dl_mutex, and does not find them on this linker build.
+
+Upstream treats that as fatal. shadowhook_check_avail returns the stored init
+errno, so every later shadowhook_hook_* call is refused and no hook is ever
+installed.
+
+Why it is safe to continue
+--------------------------
+The linker module serves two features only:
+
+  * symbol-name hooks on libraries that are not loaded yet
+  * the DL-init and DL-fini callbacks that make those pending hooks fire
+
+This project uses neither. It resolves libbluetooth_jni.so itself, waits for it
+to appear, and then calls shadowhook_hook_func_addr with absolute addresses.
+For a task created by target address, sh_task_do branches straight to
+sh_switch_hook and never touches sh_linker.
+
+Change
+------
+A linker-init failure now logs a warning instead of aborting init. sh_task_init
+is skipped in that case, because it exists to register the DL-init/fini
+callbacks that the linker module provides.
+
+Consequence
+-----------
+shadowhook_hook_sym_name and pending hooks will not work in this build. Nothing
+in this project calls them.

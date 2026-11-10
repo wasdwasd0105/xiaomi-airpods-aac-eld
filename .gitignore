@@ -1,0 +1,24 @@
+# build output
+/build/
+/*.zip
+/label/build/
+/label/aaceld-label.apk
+/label/aaceld-label.apk.idsig
+/module/zygisk/
+/module/aaceld-label.apk
+
+# the add-on's signing key is made on first build and is yours alone
+/label/signing.jks
+
+# libraries pulled from a phone or a ROM are the vendor's, not this project's
+/work/
+libbluetooth_jni*.so
+*.img
+
+# Bluetooth captures hold link keys
+*.cfa
+btsnoop_hci*.log
+btsnooz_hci*.log
+
+.DS_Store
+__pycache__/

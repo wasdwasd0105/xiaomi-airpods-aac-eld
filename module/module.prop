@@ -1,0 +1,6 @@
+id=aaceld_a2dp
+name=AAC-ELD for AirPods
+version=v0.15
+versionCode=15
+author=xiaomi-aac-eld project
+description=Adds Apple's AAC-ELD A2DP vendor codec to the Bluetooth stack and encodes it in software with the FDK-AAC already inside the stack. Finds what it needs in the stack by name and measures the codec object at start-up; does nothing on a build where that does not check out.
