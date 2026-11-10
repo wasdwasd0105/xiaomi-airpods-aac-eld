@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-2.0-only -->
+<!-- Copyright (C) the developer -->
+<resources>
+    <string name="app_name">AAC-ELD 蓝牙设置扩展</string>
+    <string name="xposed_description">在蓝牙设置中将编码标识显示为 AAC-ELD，并在耳机页面添加 AAC-ELD 开关、可变码率开关和码率滑块。需配合 AAC-ELD for AirPods 模块使用。作用域：设置。</string>
+</resources>

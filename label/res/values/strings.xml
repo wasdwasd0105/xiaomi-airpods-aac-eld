@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-2.0-only -->
+<!-- Copyright (C) the developer -->
+<!-- What the launcher, the app list and the Xposed manager show. The rows on
+     the headset's page are not here: the add-on runs inside the Settings app,
+     where its own resources are not loaded, so those texts are in
+     DevicePage.java, chosen by the phone's language in the same way. -->
+<resources>
+    <string name="app_name">AAC-ELD in Bluetooth settings</string>
+    <string name="xposed_description">Shows AAC-ELD as the codec badge in Bluetooth settings, and adds an AAC-ELD switch, a variable bit rate switch and a bit rate slider to the headset page. Needs the AAC-ELD for AirPods module. Scope: Settings.</string>
+</resources>

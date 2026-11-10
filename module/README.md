@@ -78,20 +78,21 @@ this stack's own decision and not something the module steers.
 
 ## Install
 
-`AAC-ELD-AirPods-v0.15.zip` (the same file as `aaceld_a2dp.zip`) is an
+`AAC-ELD-AirPods-v0.15.1.zip` is an
 ordinary root-manager module: flash it in the KernelSU, Magisk or APatch
 manager and reboot. It needs Zygisk. From a computer:
 
 ```bash
-adb push AAC-ELD-AirPods-v0.15.zip /sdcard/Download/
+adb push AAC-ELD-AirPods-v0.15.1.zip /sdcard/Download/
 ```
 
 ```bash
-adb shell su -c '/data/adb/ksud module install /sdcard/Download/AAC-ELD-AirPods-v0.15.zip'
+adb shell su -c '/data/adb/ksud module install /sdcard/Download/AAC-ELD-AirPods-v0.15.1.zip'
 ```
 
 The installer (`customize.sh`) does what it can of the set-up that lives
-outside the module, and lists whatever is left:
+outside the module, and lists whatever is left. Its messages are in Chinese
+when the phone's language is Chinese, and in English otherwise:
 
 - On KernelSU it switches "Umount modules" off in the Bluetooth app's
   profile (`ksud profile set`). With it on, Zygisk treats the Bluetooth app

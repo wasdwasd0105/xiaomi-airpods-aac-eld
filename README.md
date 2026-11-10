@@ -1,3 +1,5 @@
+English | [简体中文](README.zh-CN.md)
+
 # AAC-ELD for AirPods on Android
 
 AirPods offer three codecs to any phone: SBC, AAC, and Apple's variant of
@@ -24,7 +26,7 @@ Bluetooth stack can follow it.
 | Systems | HyperOS 3 (Android 16) and HyperOS 4.0.6.0 (Android 17) |
 | Headsets | AirPods 5, AirPods Pro |
 | Root | KernelSU Next with NeoZygisk. Magisk and APatch install paths are written but have not been run |
-| Version | v0.15 |
+| Version | v0.15.1 (the stack module itself is unchanged since v0.15) |
 
 What has been checked and what has not, per system, is in
 [docs/notes/development-log.md](docs/notes/development-log.md), "What has
@@ -167,6 +169,8 @@ the exact bytes on the air.
   stock ranking. Not tried with such a headset.
 - Other headsets are meant to behave exactly as without the module; only AAC
   to AirPods has been checked.
+- Languages: the installer's messages and the add-on's rows are in Simplified
+  Chinese on a phone set to Chinese, and in English otherwise.
 
 ## Contributing
 

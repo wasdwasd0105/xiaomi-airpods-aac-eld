@@ -92,6 +92,20 @@ Three details of how this fits beside Xiaomi's own switch:
   turn it off, with a short message saying why, and turns it on if it finds
   it off when the page opens or AAC-ELD is switched on.
 
+## Languages
+
+English and Simplified Chinese. The phone's language decides: any Chinese
+locale gets Chinese, everything else English.
+
+| Text | Where it is |
+|---|---|
+| The rows on the headset's page and the two short messages | `src/io/aaceld/label/DevicePage.java`, picked by `Locale.getDefault()`. They cannot be Android string resources: the add-on's code runs inside the Settings app, where its own resources are not loaded |
+| The app's name and its description in the Xposed manager | `res/values/strings.xml` and `res/values-zh/strings.xml` |
+| The names of Xiaomi's own switches in those messages ("Keep volume consistent", "Dimensional audio") | Not translated here: the row's own title is read from the page, so it is always in the phone's language |
+
+To add a language, add a branch beside each `zh ?` in `DevicePage.java` and a
+`res/values-<language>/strings.xml`.
+
 ## Build and install
 
 ```bash
@@ -116,7 +130,8 @@ adb shell am force-stop com.android.settings
 
 The build uses `javac`, `d8`, `aapt2` and `apksigner` directly, with
 hand-written stand-ins for the Xposed API in `stubs/` that are compiled
-against but not packaged. `signing.jks` is a throwaway self-signed key that
+against but not packaged. `res/` holds only the app's name and its
+description for the Xposed manager, in English and Chinese. `signing.jks` is a throwaway self-signed key that
 the script creates on first run and keeps so rebuilds can update the app.
 
 ## Removing it

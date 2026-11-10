@@ -33,7 +33,9 @@ javac --release 11 -Xlint:-options -d build/stubs $(find stubs -name '*.java')
 javac --release 11 -Xlint:-options -cp "$JAR:build/stubs" -d build/classes $(find src -name '*.java')
 # Only the add-on's own classes go in the dex; the Xposed API comes from the framework.
 "$BT/d8" --min-api 26 --lib "$JAR" --classpath build/stubs --output build/stage $(find build/classes -name '*.class')
-"$BT/aapt2" link -o build/unsigned.apk --manifest AndroidManifest.xml -I "$JAR"
+# The app's name and description, in English and Chinese.
+"$BT/aapt2" compile --dir res -o build/res.zip
+"$BT/aapt2" link -o build/unsigned.apk --manifest AndroidManifest.xml -I "$JAR" build/res.zip
 cp assets/xposed_init build/stage/assets/
 (cd build/stage && zip -q -r ../unsigned.apk classes.dex assets)
 "$BT/zipalign" -f 4 build/unsigned.apk build/aligned.apk
